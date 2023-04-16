@@ -21,7 +21,8 @@ const getAllRoles = async () => {
         "SELECT `role`.`id`, `role`.`title`, `department`.`name` AS `department`, `role`.`salary`\
          FROM `role`\
          JOIN `department`\
-         ON `role`.`department_id` = `department`.`id`");
+         ON `role`.`department_id` = `department`.`id`\
+         ORDER BY `role`.`id` ASC");
     return data[0];
 }
 const getAllEmployees = async () => {
@@ -38,8 +39,38 @@ const getAllEmployees = async () => {
     return data[0];
 }
 
+const addDepartment = async (name) => {
+    await db.promise().execute(
+        "INSERT INTO `department` (name)\
+        VALUES (?)", [name]);
+}
+
+const addRole = async (title, salary, dept) => {
+    await db.promise().execute(
+        "INSERT INTO `role` (title, salary, department_id)\
+        VALUES (?, ?, ?)", [title, salary, dept]);
+}
+
+const addEmployee = async (first, last, title, manager) => {
+    console.log({first, last, title, manager})
+    await db.promise().execute(
+        "INSERT INTO `employee` (first_name, last_name, role_id, manager_id)\
+        VALUES (?, ?, ?, ?)", [first, last, title, manager]);
+}
+
+const updateEmployee = async (title, id) => {
+    await db.promise().execute(
+        "UPDATE `employee`\
+        SET `role_id` = ?\
+        WHERE employee.id = ?", [title, id]);
+}
+
 module.exports = {
     getAllDepartments,
     getAllRoles,
     getAllEmployees,
+    addDepartment,
+    addRole,
+    addEmployee,
+    updateEmployee,
 };
